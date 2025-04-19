@@ -7,7 +7,7 @@ TOKEN = os.getenv("BOT_TOKEN")
 MENU_CONFIG_PATH = 'menu_config.json'
 
 # Replace with your actual Telegram User ID
-ADMIN_USER_ID = 123456789  # Example: Your user ID
+ADMIN_USER_ID = "Trading_House_Plus_bot"  # Example: Your user ID
 
 # Load or initialize menu configuration
 def load_menu_config():
