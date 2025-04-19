@@ -113,8 +113,8 @@ app = ApplicationBuilder().token("7687273221:AAGAC5DmtQHSh5C2C0BRT61d7xZHJpa9GJs
 
 # Add handlers
 app.add_handler(CommandHandler("start", start_admin))  # Admin start command
-app.add_handler(MessageHandler(filters.DOCUMENT, handle_document))  # Handle document uploads
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, process_location))  # Handle location processing
+app.add_handler(MessageHandler("filters.DOCUMENT", handle_document))  # Handle document uploads
+app.add_handler(MessageHandler("filters.TEXT" & "~filters.COMMAND", process_location))  # Handle location processing
 app.add_handler(CommandHandler("sendfile", send_category_file))  # Send files to users based on category
 
 # Run the bot
