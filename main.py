@@ -1,25 +1,11 @@
-import json
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
-# File to store the data (e.g., "files_data.json")
-FILES_DATA_PATH = "files_data.json"
+# Global dictionary to store file_ids for categories and grades (editable by admin)
+file_storage = {}
 
 # Admin's Telegram ID (You need to replace this with your actual Telegram ID)
 ADMIN_ID = 7350426578
-
-# Function to load file storage data from the JSON file
-def load_file_storage():
-    try:
-        with open(FILES_DATA_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
-
-# Function to save file storage data to the JSON file
-def save_file_storage(data):
-    with open(FILES_DATA_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
 
 # Function to check if the user is the admin
 def is_admin(update: Update):
@@ -63,16 +49,10 @@ async def process_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Get the category and grade from the admin's message
             location = update.message.text.strip()
             
-            # Load current file storage
-            file_storage = load_file_storage()
-
             # Save the file under the specified category and grade
             if location not in file_storage:
                 file_storage[location] = []
             file_storage[location].append(file_id)
-
-            # Save the updated file storage to the JSON file
-            save_file_storage(file_storage)
 
             # Respond back to admin
             await update.message.reply_text(
@@ -90,10 +70,6 @@ async def process_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Function to send files to users based on the selected category
 async def send_category_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     category = ' '.join(context.args)  # Get category from the command (e.g., الصوتيات)
-    
-    # Load the file storage
-    file_storage = load_file_storage()
-
     if category in file_storage:
         # Send all files in the selected category
         files = file_storage[category]
@@ -113,8 +89,8 @@ app = ApplicationBuilder().token("7687273221:AAGAC5DmtQHSh5C2C0BRT61d7xZHJpa9GJs
 
 # Add handlers
 app.add_handler(CommandHandler("start", start_admin))  # Admin start command
-app.add_handler(MessageHandler("filters.DOCUMENT", handle_document))  # Handle document uploads
-app.add_handler(MessageHandler("filters.TEXT & ~filters.COMMAND", process_location))  # Handle location processing
+app.add_handler(MessageHandler(filters.DOCUMENT, handle_document))  # Handle document uploads
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, process_location))  # Handle location processing
 app.add_handler(CommandHandler("sendfile", send_category_file))  # Send files to users based on category
 
 # Run the bot
