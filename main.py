@@ -7,11 +7,9 @@ TOKEN = os.getenv("BOT_TOKEN")
 # Main menu
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("مناهج الإنجليزي", callback_data='menu_docs')],
-        [InlineKeyboardButton("مناهج الحاسوب", callback_data='menu_media')],
-        [InlineKeyboardButton("مناهج التمهيدي", callback_data='menu_apps')]
-        [InlineKeyboardButton("المناهج الملحقة", callback_data='menu_appss')]
-        [InlineKeyboardButton(" للتواصل معنا", callback_data='menu_appsss')]
+        [InlineKeyboardButton("Documents", callback_data='menu_docs')],
+        [InlineKeyboardButton("Media", callback_data='menu_media')],
+        [InlineKeyboardButton("Apps", callback_data='menu_apps')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("Main Menu:", reply_markup=reply_markup)
@@ -43,24 +41,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'menu_apps':
         keyboard = [
-            [InlineKeyboardButton("PDF", callback_data='file_pdf')],
-            [InlineKeyboardButton("ZIP", callback_data='file_zip')],
-            [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
-        ]
-        await query.edit_message_text("Apps:", reply_markup=InlineKeyboardMarkup(keyboard))
-
-    elif data == 'menu_appss':
-        keyboard = [
-            [InlineKeyboardButton("PDF", callback_data='file_pdf')],
-            [InlineKeyboardButton("ZIP", callback_data='file_zip')],
-            [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
-        ]
-        await query.edit_message_text("Apps:", reply_markup=InlineKeyboardMarkup(keyboard))
-
-    elif data == 'menu_appsss':
-        keyboard = [
-            [InlineKeyboardButton("PDF", callback_data='file_pdf')],
-            [InlineKeyboardButton("ZIP", callback_data='file_zip')],
+            [InlineKeyboardButton("APK", callback_data='file_apk')],
+            [InlineKeyboardButton("ISO", callback_data='file_iso')],
             [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
         ]
         await query.edit_message_text("Apps:", reply_markup=InlineKeyboardMarkup(keyboard))
