@@ -10,8 +10,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("مناهج الإنجليزي", callback_data='menu_docs')],
         [InlineKeyboardButton("مناهج الحاسوب", callback_data='menu_media')],
         [InlineKeyboardButton("مناهج التمهيدي", callback_data='menu_apps')]
-        [InlineKeyboardButton("المناهج الملحقة", callback_data='menu_apps')]
-        [InlineKeyboardButton(" للتواصل معنا", callback_data='menu_apps')]
+        [InlineKeyboardButton("المناهج الملحقة", callback_data='menu_appss')]
+        [InlineKeyboardButton(" للتواصل معنا", callback_data='menu_appsss')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("Main Menu:", reply_markup=reply_markup)
@@ -42,6 +42,20 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("Media:", reply_markup=InlineKeyboardMarkup(keyboard))
 
     elif data == 'menu_apps':
+        keyboard = [
+            [InlineKeyboardButton("APK", callback_data='file_apk')],
+            [InlineKeyboardButton("ISO", callback_data='file_iso')],
+            [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
+        ]
+        await query.edit_message_text("Apps:", reply_markup=InlineKeyboardMarkup(keyboard))
+    elif data == 'menu_appss':
+        keyboard = [
+            [InlineKeyboardButton("APK", callback_data='file_apk')],
+            [InlineKeyboardButton("ISO", callback_data='file_iso')],
+            [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
+        ]
+        await query.edit_message_text("Apps:", reply_markup=InlineKeyboardMarkup(keyboard))
+    elif data == 'menu_appsss':
         keyboard = [
             [InlineKeyboardButton("APK", callback_data='file_apk')],
             [InlineKeyboardButton("ISO", callback_data='file_iso')],
