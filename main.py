@@ -8,7 +8,7 @@ TOKEN = os.getenv("BOT_TOKEN") or "YOUR_BOT_TOKEN_HERE"
 MENU_CONFIG_PATH = 'menu_config.json'
 
 # Admin username
-ADMIN_USERNAME = "Trading_House_Plus_bot"
+ADMIN_USERNAME = "@Trading_House_Plus_bot"
 
 def is_admin(user):
     return user.username == ADMIN_USERNAME
