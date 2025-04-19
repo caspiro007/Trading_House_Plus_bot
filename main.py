@@ -1,26 +1,87 @@
 import os
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
 
+# Main menu
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Welcome! Use /pdf /video /image etc.")
+    keyboard = [
+        [InlineKeyboardButton("مناهج الإنجليزي", callback_data='menu_docs')],
+        [InlineKeyboardButton("مناهج الحاسوب", callback_data='menu_media')],
+        [InlineKeyboardButton("مناهج التمهيدي", callback_data='menu_apps')]
+        [InlineKeyboardButton("المناهج الملحقة", callback_data='menu_apps')]
+        [InlineKeyboardButton(" للتواصل معنا", callback_data='menu_apps')]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text("Main Menu:", reply_markup=reply_markup)
 
-async def pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_document(open("files/sample.pdf", "rb"))
+# Callback query handler for all buttons
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
 
-async def video(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_video(open("files/sample.mp4", "rb"))
+    data = query.data
 
-async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_photo(open("files/sample.jpg", "rb"))
+    # Sub-menus
+    if data == 'menu_docs':
+        keyboard = [
+            [InlineKeyboardButton("PDF", callback_data='file_pdf')],
+            [InlineKeyboardButton("ZIP", callback_data='file_zip')],
+            [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
+        ]
+        await query.edit_message_text("Documents:", reply_markup=InlineKeyboardMarkup(keyboard))
+
+    elif data == 'menu_media':
+        keyboard = [
+            [InlineKeyboardButton("Image", callback_data='file_image')],
+            [InlineKeyboardButton("Video", callback_data='file_video')],
+            [InlineKeyboardButton("Audio", callback_data='file_audio')],
+            [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
+        ]
+        await query.edit_message_text("Media:", reply_markup=InlineKeyboardMarkup(keyboard))
+
+    elif data == 'menu_apps':
+        keyboard = [
+            [InlineKeyboardButton("APK", callback_data='file_apk')],
+            [InlineKeyboardButton("ISO", callback_data='file_iso')],
+            [InlineKeyboardButton("⬅️ Back", callback_data='back_main')]
+        ]
+        await query.edit_message_text("Apps:", reply_markup=InlineKeyboardMarkup(keyboard))
+
+    elif data == 'back_main':
+        await start(update, context)
+
+    # Sending actual files
+    else:
+        file_map = {
+            'file_pdf': ('files/sample.pdf', 'document'),
+            'file_zip': ('files/sample.zip', 'document'),
+            'file_image': ('files/sample.jpg', 'photo'),
+            'file_video': ('files/sample.mp4', 'video'),
+            'file_audio': ('files/sample.mp3', 'audio'),
+            'file_apk': ('files/sample.apk', 'document'),
+            'file_iso': ('files/sample.iso', 'document')
+        }
+
+        file_path, method = file_map.get(data, (None, None))
+
+        if not file_path or not os.path.exists(file_path):
+            await query.edit_message_text("File not found.")
+            return
+
+        if method == 'document':
+            await query.message.reply_document(open(file_path, "rb"))
+        elif method == 'video':
+            await query.message.reply_video(open(file_path, "rb"))
+        elif method == 'photo':
+            await query.message.reply_photo(open(file_path, "rb"))
+        elif method == 'audio':
+            await query.message.reply_audio(open(file_path, "rb"))
 
 app = ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("pdf", pdf))
-app.add_handler(CommandHandler("video", video))
-app.add_handler(CommandHandler("image", image))
+app.add_handler(CallbackQueryHandler(button_handler))
 
 app.run_polling()
